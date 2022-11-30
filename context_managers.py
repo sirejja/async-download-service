@@ -25,14 +25,9 @@ class ZipContextManager:
         self.stdout = self.proc.stdout
         self.stderr = self.proc.stderr
 
-        if not os.path.exists(self.path_to_photos):
-            raise web.HTTPNotFound(
-                text='Архив не существует или был удален'
-            )
-
         return self
 
-    async def read_chunked_zip_stdout(self):
+    async def read_chunked_zip_stdout(self) -> bytes:
         if self.proc.stdout.at_eof():
             return None
         logging.info('Sending archive chunk ...')

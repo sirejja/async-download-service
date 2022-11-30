@@ -5,12 +5,8 @@ import logging
 from context_managers import ZipContextManager
 
 
-async def archive_handler(request: web.Request) -> web.StreamResponse:
-    if not(archive_hash := request.match_info['archive_hash']):
-        raise web.HTTPNotFound(
-                text='Архив не существует или был удален'
-            )
-
+async def get_archive_handler(request: web.Request) -> web.StreamResponse:
+    archive_hash = request.match_info['archive_hash']
     response = web.StreamResponse()
     response.enable_chunked_encoding()
     response.headers['Content-Type'] = 'text/html'
@@ -30,6 +26,9 @@ async def archive_handler(request: web.Request) -> web.StreamResponse:
                 await response.write(chunk)
         except ConnectionResetError:
             logging.info('Download was interrupted')
+            raise web.HTTPBadRequest(
+                text='Download was interrupted'
+            )
 
     return response
 

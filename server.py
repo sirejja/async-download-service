@@ -5,12 +5,12 @@ import cli
 import dotenv
 
 
-def get_app(args):
+def get_app(args) -> web.Application:
     app = web.Application()
     app["settings"] = args
     app.add_routes([
         web.get('/', handlers.index_page_handler),
-        web.get('/archive/{archive_hash}/', handlers.archive_handler),
+        web.get('/archive/{archive_hash:\S{4,}}/', handlers.get_archive_handler),
     ])
     return app
 
